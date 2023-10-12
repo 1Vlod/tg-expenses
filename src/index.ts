@@ -1,58 +1,27 @@
-import TelegramBot from 'node-telegram-bot-api';
+import bot from './modules/tgBot';
+import mongoProvider from './modules/mongo';
+import { listeners } from './listeners';
 
-import config from './config';
-import { EVENTS, currencyMap } from './constants';
-import { isEventMatch } from './helpers';
+const start = async () => {
+  await mongoProvider.connect().then(() => {
+    console.log('Connected to MongoDB');
+  });
 
-const bot = new TelegramBot(config.botToken, {
-  polling: true,
-  onlyFirstMatch: true,
-});
-
-bot.onText(EVENTS.START, msg => {
-  bot.sendMessage(msg.chat.id, 'Welcome to my Telegram bot!');
-});
-
-bot.onText(EVENTS.HELP, msg => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(
-    chatId,
-    'Available commands:\n/start - Start the bot\n/help - Show this help message',
-  );
-});
-
-bot.onText(EVENTS.ANY_DIGITS, (msg, match) => {
-  const chatId = msg.chat.id;
-  const amount = match?.[1];
-  // TODO: add helper for checking that at least one falsy
-  if (!amount || !msg.text) {
-    bot.sendMessage(chatId, 'Invalid format. Please use default format.'); // TODO: add default format example
-    return;
+  for (const listener of listeners) {
+    if (listener.type === 'text') {
+      bot.onText(listener.event, listener.handler);
+      continue;
+    }
+    bot.on(listener.type, listener.handler);
   }
-  const info = msg.text
-    .replace(amount, ' ')
-    .replace(/ +/g, ' ')
-    .trim()
-    .split(' ');
 
-  const parsedCurrency = currencyMap[info[0].toUpperCase()] || info[0];
+  console.log('Bot is running');
+};
 
-  bot.sendMessage(
-    chatId,
-    `You typed the amount: *${amount}* with currency *${parsedCurrency}* and description *${info[1]}*`,
-    {
-      parse_mode: 'Markdown',
-    },
-  );
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received');
+  await mongoProvider.disconnect();
+  process.exit(0);
 });
 
-// Listen for any message
-bot.on('message', msg => {
-  if (!msg.text || isEventMatch(msg.text)) {
-    return;
-  }
-  bot.sendMessage(
-    msg.chat.id,
-    'Sorry, I did not understand that. Type /help for a list of available commands.',
-  );
-});
+start();
