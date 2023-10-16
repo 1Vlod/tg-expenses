@@ -45,27 +45,20 @@ export const listeners: TGListener[] = [
 
   {
     type: 'text',
-    event: EVENTS.MY_EXPENSES,
+    event: EVENTS.TOTAL_EXPENSES,
     handler: async msg => {
       const chatId = msg.chat.id;
       if (!msg.from?.id) {
         bot.sendMessage(chatId, 'Invalid format. Please use default format.'); // TODO: add default format example
         return;
       }
-      const expenses = await expensesRepository.getExpenses(
-        msg.from?.id.toString() || '',
+      const total = await expensesRepository.getTotal(msg.from.id.toString());
+      const totalString = total.map(
+        ({ currency, total }) => `\n*${total}:* ${currency}`,
       );
-      if (!expenses.length) {
-        bot.sendMessage(chatId, 'You have no expenses yet.');
-        return;
-      }
-      const expensesList = expenses
-        .map(
-          expense =>
-            `*${expense.amount}* ${expense.currency} - ${expense.description}`,
-        )
-        .join('\n');
-      bot.sendMessage(chatId, expensesList, { parse_mode: 'Markdown' });
+      bot.sendMessage(chatId, `Your total expenses: ${totalString}`, {
+        parse_mode: 'Markdown',
+      });
     },
   },
 
