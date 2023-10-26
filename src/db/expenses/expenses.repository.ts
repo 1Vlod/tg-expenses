@@ -22,11 +22,27 @@ class ExpensesRepository {
     return result;
   }
 
-  async getExpenses(userId: string) {
-    return await this.collection.find({ userId }).toArray();
+  async getExpenses({
+    userId,
+    from,
+    to,
+  }: {
+    userId: number;
+    from: string;
+    to: string;
+  }) {
+    return await this.collection
+      .find({
+        userId,
+        createdAt: {
+          $gte: new Date(from),
+          $lte: new Date(to),
+        },
+      })
+      .toArray();
   }
 
-  async getTotal(userId: string) {
+  async getTotal(userId: number) {
     const total = await this.collection
       .aggregate<{
         currency: string;
@@ -75,6 +91,4 @@ class ExpensesRepository {
   }
 }
 
-const expensesRepository = new ExpensesRepository();
-
-export default expensesRepository;
+export default new ExpensesRepository();

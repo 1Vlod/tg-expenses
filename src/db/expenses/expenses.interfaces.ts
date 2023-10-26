@@ -1,6 +1,6 @@
 export interface Expense {
   _id: string;
-  userId: string;
+  userId: number;
   messageId: number;
   chatId: number;
   amount: number;

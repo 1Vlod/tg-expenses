@@ -22,6 +22,4 @@ class MongoProvider {
   }
 }
 
-const mongoProvider = new MongoProvider();
-
-export default mongoProvider;
+export default new MongoProvider();

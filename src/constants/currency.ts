@@ -4,6 +4,7 @@ const currencyCodes = {
   GBP: 'GBP',
   AUD: 'AUD',
   RUB: 'RUB',
+  KGS: 'KGS',
 } as const;
 
 const symbolsCurrencyMap = {
@@ -20,6 +21,7 @@ const oneLetterCurrencyMap = {
   G: currencyCodes.GBP,
   A: currencyCodes.AUD,
   R: currencyCodes.RUB,
+  S: currencyCodes.KGS,
 };
 
 const customCurrencyMap = {
@@ -33,6 +35,9 @@ const customCurrencyMap = {
   РУБЛЕЙ: currencyCodes.RUB, // TODO: think about same root
   РУБЛЬ: currencyCodes.RUB,
   РУБЛЯ: currencyCodes.RUB,
+  SOM: currencyCodes.KGS,
+  СОМ: currencyCodes.KGS,
+  С: currencyCodes.KGS,
 };
 
 export const currencyMap: {
