@@ -1,9 +1,15 @@
 import { PREFIX } from '../constants';
 
-export interface UsecaseResponse {
-  message: string;
-  buttons: { title: string; id?: string; prefix?: PREFIX }[][];
-}
+export type UsecaseResponse =
+  | {
+      error?: false;
+      message: string;
+      buttons?: { title: string; id?: string; prefix?: PREFIX }[][];
+    }
+  | {
+      error: true;
+      message: string;
+    };
 
 export type Usecase<T extends object> = (
   params: T,

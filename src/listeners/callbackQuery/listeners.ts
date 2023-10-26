@@ -3,6 +3,7 @@ import { getEpxensesUsecase } from '../../usecases/getExpenses';
 import { parseDateFilterUsecase } from '../../usecases/parseDateFilter';
 import { getEpxenseUsecase } from '../../usecases/getExpense';
 import { CallbackQueryContext } from './interfaces';
+import { deleteEpxenseUsecase } from '../../usecases/deleteExpense';
 
 export const CALLBACK_QUERY_LISTENERS_MAP: {
   [key in PREFIX]: (
@@ -12,7 +13,7 @@ export const CALLBACK_QUERY_LISTENERS_MAP: {
     | {
         response: {
           message: string;
-          buttons: { title: string; id?: string, prefix?: PREFIX }[][];
+          buttons?: { title: string; id?: string; prefix?: PREFIX }[][];
         };
         prefix?: PREFIX;
         error?: false;
@@ -61,9 +62,18 @@ export const CALLBACK_QUERY_LISTENERS_MAP: {
   },
 
   [PREFIX.EXPENSES_DELETE]: async (ctx, callbackQueryData) => {
+    const expenseId = callbackQueryData;
+
+    const response = await deleteEpxenseUsecase({ id: expenseId });
+
+    if (response.error) {
+      return response;
+    }
+
     return {
-      error: true,
-      message: 'Not implemented yet',
+      response: {
+        message: response.message,
+      },
     };
   },
 };
