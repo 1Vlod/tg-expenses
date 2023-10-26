@@ -13,13 +13,17 @@ export const callbackQueryListener: CallbackQueryListener = async query => {
     const queryData = parseCallbackQueryData(query.data);
     if (!queryData) {
       console.error('Invalid callback query data', query.data);
-      bot.answerCallbackQuery(
-        query.id,
+      await bot.sendMessage(
+        chatId,
         'Something went wrong. Please try again later.',
-      ); // TODO: add common error handler
+      );
       return;
     }
     const { prefix, key } = queryData;
+
+    if (key.includes('cancel')) {
+      return;
+    }
 
     const handler = CALLBACK_QUERY_LISTENERS_MAP[prefix as PREFIX];
     const handlerResponse = await handler(

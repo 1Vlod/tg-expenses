@@ -1,31 +1,13 @@
 import { PREFIX } from '../../constants';
 import { getEpxensesUsecase } from '../../usecases/getExpenses';
-import { parseDateFilterUsecase } from '../../usecases/parseDateFilter';
 import { getEpxenseUsecase } from '../../usecases/getExpense';
-import { CallbackQueryContext } from './interfaces';
+import { CallbackQueryListenersMap } from './interfaces';
 import { deleteEpxenseUsecase } from '../../usecases/deleteExpense';
+import { parseDateFilter } from '../../helpers/parsers';
 
-export const CALLBACK_QUERY_LISTENERS_MAP: {
-  [key in PREFIX]: (
-    ctx: CallbackQueryContext,
-    callbackQueryData: string,
-  ) => Promise<
-    | {
-        response: {
-          message: string;
-          buttons?: { title: string; id?: string; prefix?: PREFIX }[][];
-        };
-        prefix?: PREFIX;
-        error?: false;
-      }
-    | {
-        message: string;
-        error: true;
-      }
-  >;
-} = {
+export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
   [PREFIX.EXPENSES_DATE_FILTER]: async (ctx, callbackQueryData) => {
-    const dateFilters = parseDateFilterUsecase(callbackQueryData);
+    const dateFilters = parseDateFilter(callbackQueryData);
     if (!dateFilters) {
       throw new Error('Invalid date filter');
     }
@@ -36,7 +18,6 @@ export const CALLBACK_QUERY_LISTENERS_MAP: {
     });
 
     return {
-      status: 'ok',
       prefix: PREFIX.EXPENSES_GET_ONE,
       response,
     };
@@ -44,13 +25,12 @@ export const CALLBACK_QUERY_LISTENERS_MAP: {
   [PREFIX.EXPENSES_GET_ONE]: async (_, callbackQueryData) => {
     const expenseId = callbackQueryData;
 
-    const message = await getEpxenseUsecase({
+    const response = await getEpxenseUsecase({
       id: expenseId,
     });
 
     return {
-      status: 'ok',
-      response: message,
+      response,
     };
   },
 
