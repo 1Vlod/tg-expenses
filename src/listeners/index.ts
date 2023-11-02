@@ -40,9 +40,6 @@ export const listeners: TGListener[] = [
       bot.sendMessage(
         chatId,
         `You typed the amount: *${amount}* with currency *${parsedCurrency}* and description *${description}*`,
-        {
-          parse_mode: 'Markdown',
-        },
       );
     },
   },
@@ -59,9 +56,7 @@ export const listeners: TGListener[] = [
       const totalString = total.map(
         ({ currency, total }) => `\n*${total}:* ${currency}`,
       );
-      bot.sendMessage(chatId, `Your total expenses: ${totalString}`, {
-        parse_mode: 'Markdown',
-      });
+      bot.sendMessage(chatId, `Your total expenses: ${totalString}`);
     },
   },
 

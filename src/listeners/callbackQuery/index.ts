@@ -13,13 +13,17 @@ export const callbackQueryListener: CallbackQueryListener = async query => {
     const queryData = parseCallbackQueryData(query.data);
     if (!queryData) {
       console.error('Invalid callback query data', query.data);
-      bot.answerCallbackQuery(
-        query.id,
+      await bot.sendMessage(
+        chatId,
         'Something went wrong. Please try again later.',
-      ); // TODO: add common error handler
+      );
       return;
     }
     const { prefix, key } = queryData;
+
+    if (key.includes('cancel')) {
+      return;
+    }
 
     const handler = CALLBACK_QUERY_LISTENERS_MAP[prefix as PREFIX];
     const handlerResponse = await handler(
@@ -28,7 +32,13 @@ export const callbackQueryListener: CallbackQueryListener = async query => {
     );
 
     if (handlerResponse.error) {
-      console.error(prefix, key, handler.name, handlerResponse.message);
+      console.error(
+        'Prefix: %s, key: %s, handler: %s, error: %s',
+        prefix,
+        key,
+        handler.name,
+        handlerResponse.message,
+      );
       await bot.sendMessage(
         chatId,
         'Something went wrong. Please try again later.',
@@ -41,18 +51,12 @@ export const callbackQueryListener: CallbackQueryListener = async query => {
       prefix: responsePrefix,
     } = handlerResponse;
 
-    if (buttons.length !== 0) {
-      await bot.sendInlineKeyboard({
-        chatId,
-        text: message,
-        keyboard: {
-          keys: buttons,
-          commonPrefix: responsePrefix,
-        },
-      });
-    } else {
-      await bot.sendMessage(chatId, message);
-    }
+    await bot.sendMessage(chatId, message, {
+      keyboard: {
+        keys: buttons,
+        commonPrefix: responsePrefix,
+      },
+    });
   } catch (error) {
     console.error('Unexpected error in callbackQueryListener', error);
     await bot.sendMessage(

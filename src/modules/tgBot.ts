@@ -33,10 +33,48 @@ class BotProvider {
     this.bot.on('callback_query', callbackQueryListener);
   }
 
-  async sendMessage(chatId: number, text: string, options?: {}) {
+  async sendMessage(
+    chatId: number,
+    text: string,
+    options?: {
+      keyboard: {
+        keys?: {
+          id?: string;
+          title: string;
+          prefix?: PREFIX;
+        }[][];
+        commonPrefix?: PREFIX;
+      };
+      parseMode?: 'Markdown';
+    },
+  ) {
+    const messageOptions: TelegramBot.SendMessageOptions = {};
+
+    if (options?.keyboard && options.keyboard.keys) {
+      messageOptions.reply_markup = {
+        inline_keyboard: [
+          ...options.keyboard.keys.map(row =>
+            row.map(({ title, id, prefix }) => ({
+              text: title,
+              callback_data: [
+                prefix || options.keyboard.commonPrefix,
+                id || title.toLowerCase(),
+              ]
+                .join('.')
+                .slice(0, 64),
+            })),
+          ),
+        ],
+      };
+    }
+
+    if (options?.parseMode) {
+      messageOptions.parse_mode = options.parseMode;
+    }
+
     return this.bot.sendMessage(chatId, text, {
       parse_mode: 'Markdown',
-      ...options,
+      ...messageOptions,
     });
   }
 
