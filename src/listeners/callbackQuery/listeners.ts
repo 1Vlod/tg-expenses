@@ -9,7 +9,11 @@ export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
   [PREFIX.EXPENSES_DATE_FILTER]: async (ctx, callbackQueryData) => {
     const dateFilters = parseDateFilter(callbackQueryData);
     if (!dateFilters) {
-      throw new Error('Invalid date filter');
+      return {
+        error: true,
+        message: 'Invalid date filter',
+        userErrorMessage: 'Unsupported date filter. Please try again later.',
+      };
     }
 
     const response = await getEpxensesUsecase({

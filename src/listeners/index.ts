@@ -86,8 +86,18 @@ export const listeners: TGListener[] = [
         text: 'Choose date range:',
         keyboard: {
           keys: [
-            [{ title: 'Today' }, { title: 'Yesterday' }, { title: 'Week' }],
-            [{ title: 'Cancel' }],
+            [
+              { title: 'Today' },
+              { title: 'Yesterday' },
+              { title: 'last 2 days' },
+            ],
+            [
+              { title: 'last 3 days' },
+              { title: 'Week' },
+              { title: 'last 2 weeks' },
+            ],
+            [{ title: 'Month' }, { title: 'Year' }, { title: 'All time' }],
+            [{ title: '🚫' }],
           ],
           commonPrefix: PREFIX.EXPENSES_DATE_FILTER,
         },

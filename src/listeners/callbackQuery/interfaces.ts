@@ -21,6 +21,7 @@ export type CallbackQueryListenerResponse =
     }
   | {
       message: string;
+      userErrorMessage?: string;
       error: true;
     };
 
