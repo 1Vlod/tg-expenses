@@ -2,14 +2,15 @@ export * from './message.listener';
 export * from './callbackQuery';
 
 import bot from '../modules/tgBot';
+import expensesRepository from '../db/expenses/expenses.repository';
 import { EVENTS, PREFIX, currencyMap } from '../constants';
 import { TGListener } from './interfaces';
-import expensesRepository from '../db/expenses/expenses.repository';
+import { helpTemplate } from '../templates';
 
 export const listeners: TGListener[] = [
   {
     event: EVENTS.ANY_DIGITS,
-    handler: (msg, match) => {
+    handler: async (msg, match) => {
       const chatId = msg.chat.id;
       const amount = match?.[1];
       // TODO: add helper for checking that at least one falsy
@@ -21,14 +22,14 @@ export const listeners: TGListener[] = [
         .replace(amount, ' ')
         .replace(/ +/g, ' ')
         .trim()
-        .split(' ');
+        .split(' '); // TODO: add handling "-" in description. Exmpl: "100 USD - lunch with friends"
 
       const [currency, ...descriptionArray] = info;
       const description = descriptionArray.join(' ');
 
       const parsedCurrency = currencyMap[currency.toUpperCase()] || currency;
 
-      expensesRepository.createExpense({
+      await expensesRepository.createExpense({
         userId: msg.from?.id,
         messageId: msg.message_id,
         chatId: msg.chat.id,
@@ -37,7 +38,7 @@ export const listeners: TGListener[] = [
         description,
       });
 
-      bot.sendMessage(
+      await bot.sendMessage(
         chatId,
         `You typed the amount: *${amount}* with currency *${parsedCurrency}* and description *${description}*`,
       );
@@ -64,10 +65,7 @@ export const listeners: TGListener[] = [
     event: EVENTS.HELP,
     handler: msg => {
       const chatId = msg.chat.id;
-      bot.sendMessage(
-        chatId,
-        'Available commands:\n/start - Start the bot\n/help - Show this help message',
-      );
+      bot.sendMessage(chatId, helpTemplate);
     },
   },
 
