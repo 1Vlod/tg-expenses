@@ -31,15 +31,46 @@ class ExpensesRepository {
     from: string;
     to: string;
   }) {
-    return await this.collection
-      .find({
-        userId,
-        createdAt: {
-          $gte: new Date(from),
-          $lte: new Date(to),
+    const result = await this.collection
+      .aggregate<{
+        expenses: Expense[];
+        totalCount: { count: number }[];
+      }>([
+        {
+          $match: {
+            userId,
+            createdAt: {
+              $gte: new Date(from),
+              $lte: new Date(to),
+            },
+          },
         },
-      })
+        {
+          $sort: {
+            createdAt: -1,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            createdAt: 1,
+            amount: 1,
+            currency: 1,
+            description: 1,
+          },
+        },
+        {
+          $facet: {
+            expenses: [{ $match: {} }],
+            totalCount: [{ $count: 'count' }],
+          },
+        },
+      ])
       .toArray();
+
+    console.log('total count: ', result[0].totalCount[0].count); // TODO: add pagination
+
+    return result[0].expenses;
   }
 
   async getTotal(userId: number) {

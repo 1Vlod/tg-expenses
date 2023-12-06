@@ -5,7 +5,7 @@ import bot from '../modules/tgBot';
 import expensesRepository from '../db/expenses/expenses.repository';
 import { EVENTS, PREFIX, currencyMap } from '../constants';
 import { TGListener } from './interfaces';
-import { helpTemplate } from '../templates';
+import { expensesButtons, helpTemplate } from '../templates';
 
 export const listeners: TGListener[] = [
   {
@@ -83,20 +83,7 @@ export const listeners: TGListener[] = [
         chatId: msg.chat.id,
         text: 'Choose date range:',
         keyboard: {
-          keys: [
-            [
-              { title: 'Today' },
-              { title: 'Yesterday' },
-              { title: 'last 2 days' },
-            ],
-            [
-              { title: 'last 3 days' },
-              { title: 'Week' },
-              { title: 'last 2 weeks' },
-            ],
-            [{ title: 'Month' }, { title: 'Year' }, { title: 'All time' }],
-            [{ title: '🚫' }],
-          ],
+          keys: expensesButtons,
           commonPrefix: PREFIX.EXPENSES_DATE_FILTER,
         },
       });
