@@ -5,6 +5,7 @@ const currencyCodes = {
   AUD: 'AUD',
   RUB: 'RUB',
   KGS: 'KGS',
+  RSD: 'RSD',
 } as const;
 
 const symbolsCurrencyMap = {
@@ -22,6 +23,8 @@ const oneLetterCurrencyMap = {
   A: currencyCodes.AUD,
   R: currencyCodes.RUB,
   S: currencyCodes.KGS,
+  K: currencyCodes.KGS,
+  D: currencyCodes.RSD,
 };
 
 const customCurrencyMap = {
@@ -38,6 +41,12 @@ const customCurrencyMap = {
   SOM: currencyCodes.KGS,
   СОМ: currencyCodes.KGS,
   С: currencyCodes.KGS,
+  DIN: currencyCodes.RSD,
+  ДИН: currencyCodes.RSD,
+  Д: currencyCodes.RSD,
+  'ДИНАР': currencyCodes.RSD,
+  RD: currencyCodes.RSD,
+  D: currencyCodes.RSD,
 };
 
 export const currencyMap: {

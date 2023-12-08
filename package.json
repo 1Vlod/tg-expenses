@@ -4,9 +4,9 @@
   "description": "Telegram bot to track expenses",
   "main": "index.js",
   "scripts": {
-    "start:dev": "set -a && . ./.env && set +a &&  nodemon",
+    "start:dev": "set -a && . ./.env && set +a && nodemon",
     "build": "rimraf ./build && tsc",
-    "start": "npm run build && node build/index.js"
+    "start": "set -a && . ./.env && set +a && npm run build && node build/index.js"
   },
   "repository": {
     "type": "git",

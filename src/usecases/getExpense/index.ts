@@ -12,12 +12,9 @@ export const getEpxenseUsecase: Usecase<GetExpenseParams> = async params => {
     };
   }
 
-  const message = `${expense?.createdAt
-    .toISOString()
-    .slice(
-      0,
-      10,
-    )}: ${expense?.amount} ${expense?.currency} - ${expense?.description}`;
+  const message = `*${expense.createdAt.toISOString().slice(0, 10)}*: ${
+    expense.amount
+  } *${expense.currency}* - ${expense.description || 'Without description'}`;
 
   return {
     message,

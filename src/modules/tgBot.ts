@@ -16,6 +16,10 @@ class BotProvider {
     });
   }
 
+  async init(commands: TelegramBot.BotCommand[]) {
+    await this.bot.setMyCommands(commands);
+  }
+
   addListeners({
     listeners,
     messageListener,

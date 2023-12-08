@@ -1,4 +1,5 @@
 import { PREFIXES, PREFIX } from '../constants';
+import { DATE_FILTERS, dateFiltersOptions } from '../constants/dateFilters';
 import { CallbackQueryData } from '../listeners/callbackQuery/interfaces';
 
 export const parseCallbackQueryData = (data = '') => {
@@ -25,34 +26,18 @@ export const parseCallbackQueryData = (data = '') => {
 export const parseDateFilter = (
   date: string,
 ): { from: string; to: string } | undefined => {
-  if (date === 'today') {
-    const from = new Date().toISOString().slice(0, 10);
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const to = tomorrow.toISOString().slice(0, 10);
-    return {
-      from,
-      to,
-    };
+  const options = dateFiltersOptions[date as DATE_FILTERS];
+  if (!options) {
+    return;
   }
 
-  if (date === 'yesterday') {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    return {
-      from: yesterday.toISOString().slice(0, 10),
-      to: new Date().toISOString().slice(0, 10),
-    };
-  }
-  if (date === 'week') {
-    const week = new Date();
-    week.setDate(week.getDate() - 7);
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const to = tomorrow.toISOString().slice(0, 10);
-    return {
-      from: week.toISOString().slice(0, 10),
-      to,
-    };
-  }
+  const from = new Date();
+  from.setDate(from.getDate() + options.from);
+  const to = new Date();
+  to.setDate(to.getDate() + options.to);
+
+  return {
+    from: from.toISOString().slice(0, 10),
+    to: to.toISOString().slice(0, 10),
+  };
 };

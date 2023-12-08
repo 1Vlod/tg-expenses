@@ -21,7 +21,7 @@ export const callbackQueryListener: CallbackQueryListener = async query => {
     }
     const { prefix, key } = queryData;
 
-    if (key.includes('cancel')) {
+    if (key.includes('cancel') || key.includes('🚫')) {
       return;
     }
 
@@ -41,7 +41,8 @@ export const callbackQueryListener: CallbackQueryListener = async query => {
       );
       await bot.sendMessage(
         chatId,
-        'Something went wrong. Please try again later.',
+        handlerResponse.userErrorMessage ||
+          'Something went wrong. Please try again later.',
       );
       return;
     }

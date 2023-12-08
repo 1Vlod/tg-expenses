@@ -2,14 +2,15 @@ export * from './message.listener';
 export * from './callbackQuery';
 
 import bot from '../modules/tgBot';
+import expensesRepository from '../db/expenses/expenses.repository';
 import { EVENTS, PREFIX, currencyMap } from '../constants';
 import { TGListener } from './interfaces';
-import expensesRepository from '../db/expenses/expenses.repository';
+import { expensesButtons, helpTemplate, startMessage } from '../templates';
 
 export const listeners: TGListener[] = [
   {
     event: EVENTS.ANY_DIGITS,
-    handler: (msg, match) => {
+    handler: async (msg, match) => {
       const chatId = msg.chat.id;
       const amount = match?.[1];
       // TODO: add helper for checking that at least one falsy
@@ -21,14 +22,14 @@ export const listeners: TGListener[] = [
         .replace(amount, ' ')
         .replace(/ +/g, ' ')
         .trim()
-        .split(' ');
+        .split(' '); // TODO: add handling "-" in description. Exmpl: "100 USD - lunch with friends"
 
       const [currency, ...descriptionArray] = info;
       const description = descriptionArray.join(' ');
 
       const parsedCurrency = currencyMap[currency.toUpperCase()] || currency;
 
-      expensesRepository.createExpense({
+      await expensesRepository.createExpense({
         userId: msg.from?.id,
         messageId: msg.message_id,
         chatId: msg.chat.id,
@@ -37,7 +38,7 @@ export const listeners: TGListener[] = [
         description,
       });
 
-      bot.sendMessage(
+      await bot.sendMessage(
         chatId,
         `You typed the amount: *${amount}* with currency *${parsedCurrency}* and description *${description}*`,
       );
@@ -64,17 +65,14 @@ export const listeners: TGListener[] = [
     event: EVENTS.HELP,
     handler: msg => {
       const chatId = msg.chat.id;
-      bot.sendMessage(
-        chatId,
-        'Available commands:\n/start - Start the bot\n/help - Show this help message',
-      );
+      bot.sendMessage(chatId, helpTemplate);
     },
   },
 
   {
     event: EVENTS.START,
     handler: msg => {
-      bot.sendMessage(msg.chat.id, 'Welcome to my Telegram bot!');
+      bot.sendMessage(msg.chat.id, startMessage);
     },
   },
 
@@ -85,10 +83,7 @@ export const listeners: TGListener[] = [
         chatId: msg.chat.id,
         text: 'Choose date range:',
         keyboard: {
-          keys: [
-            [{ title: 'Today' }, { title: 'Yesterday' }, { title: 'Week' }],
-            [{ title: 'Cancel' }],
-          ],
+          keys: expensesButtons,
           commonPrefix: PREFIX.EXPENSES_DATE_FILTER,
         },
       });
