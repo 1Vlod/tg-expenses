@@ -5,7 +5,7 @@ import bot from '../modules/tgBot';
 import expensesRepository from '../db/expenses/expenses.repository';
 import { EVENTS, PREFIX, currencyMap } from '../constants';
 import { TGListener } from './interfaces';
-import { expensesButtons, helpTemplate } from '../templates';
+import { expensesButtons, helpTemplate, startMessage } from '../templates';
 
 export const listeners: TGListener[] = [
   {
@@ -72,7 +72,7 @@ export const listeners: TGListener[] = [
   {
     event: EVENTS.START,
     handler: msg => {
-      bot.sendMessage(msg.chat.id, 'Welcome to my Telegram bot!');
+      bot.sendMessage(msg.chat.id, startMessage);
     },
   },
 
