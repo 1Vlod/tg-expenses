@@ -6,7 +6,8 @@
   "scripts": {
     "start:dev": "set -a && . ./.env && set +a && nodemon",
     "build": "rimraf ./build && tsc",
-    "start": "set -a && . ./.env && set +a && npm run build && node build/index.js"
+    "start": "set -a && . ./.env && set +a && npm run build && node build/index.js",
+    "start:pm2": "set -a && . ./.env && set +a && npm run build && pm2 start build/index.js --name tg-expenses"
   },
   "repository": {
     "type": "git",
