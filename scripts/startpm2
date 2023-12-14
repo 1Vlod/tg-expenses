@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+ls -la
+# Load environment variables from .env file
+set -a
+source ./.env
+set +a
+
+# Run npm ci for a clean, reproducible build
+npm ci
+
+# Build the project
+npm run build
+
+# Stop the existing process if it's running (ignore errors if it's not running)
+pm2 delete tg-expenses || true
+
+# Start the new process
+pm2 start build/index.js --name tg-expenses
+
+# Add some logging
+echo "Deployment successful!"
+
+# Reset exit on error behavior (optional, depending on your needs)
+set +e
