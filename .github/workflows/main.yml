@@ -1,0 +1,16 @@
+name: Main workflow
+on: [workflow_dispatch]
+jobs:
+  production-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+        with:
+          # ssh remote host
+          host: ${{secrets.PROD_IP}}
+          user: ${{secrets.PROD_USER}}
+          pass: ${{secrets.PROD_PASSWORD}}
+          # execute pre-commands before scp
+          first_ssh: "ls"
+              
+  
