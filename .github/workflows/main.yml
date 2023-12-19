@@ -11,6 +11,6 @@ jobs:
           user: ${{secrets.PROD_USER}}
           pass: ${{secrets.PROD_PASSWORD}}
           # execute pre-commands before scp
-          first_ssh: "cd ./tgexpenses && git pull && npm run start:pm2"
+          first_ssh: "ls && cd ./tgexpenses && git pull && ls && scripts/startpm2"
               
   
