@@ -4,6 +4,10 @@ jobs:
   production-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version-file: .nvmrc          
       - uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
         with:
           # ssh remote host
@@ -11,6 +15,6 @@ jobs:
           user: ${{secrets.PROD_USER}}
           pass: ${{secrets.PROD_PASSWORD}}
           # execute pre-commands before scp
-          first_ssh: "/path/to/node -v && cd ./tgexpenses && git pull && scripts/startpm2"
+          first_ssh: "node -v && cd ./tgexpenses && git pull && scripts/startpm2"
               
   
