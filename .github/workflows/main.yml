@@ -2,12 +2,8 @@ name: Main workflow
 on: [workflow_dispatch]
 jobs:
   production-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.1
-        with:
-          node-version-file: .nvmrc          
+    runs-on: self-hosted
+    steps:          
       - uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
         with:
           # ssh remote host
