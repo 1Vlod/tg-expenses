@@ -3,9 +3,10 @@ export * from './callbackQuery';
 
 import bot from '../modules/tgBot';
 import expensesRepository from '../db/expenses/expenses.repository';
-import { EVENTS, PREFIX, currencyMap } from '../constants';
+import { EVENTS, PREFIX } from '../constants';
 import { TGListener } from './interfaces';
 import { expensesButtons, helpTemplate, startMessage } from '../templates';
+import { createExpenseUsecase } from '../usecases/createExpense';
 
 export const listeners: TGListener[] = [
   {
@@ -18,30 +19,16 @@ export const listeners: TGListener[] = [
         bot.sendMessage(chatId, 'Invalid format. Please use default format.'); // TODO: add default format example
         return;
       }
-      const info = msg.text
-        .replace(amount, ' ')
-        .replace(/ +/g, ' ')
-        .trim()
-        .split(' '); // TODO: add handling "-" in description. Exmpl: "100 USD - lunch with friends"
 
-      const [currency, ...descriptionArray] = info;
-      const description = descriptionArray.join(' ');
-
-      const parsedCurrency = currencyMap[currency.toUpperCase()] || currency;
-
-      await expensesRepository.createExpense({
-        userId: msg.from?.id,
+      const response = await createExpenseUsecase({
+        amount,
+        chatId,
+        text: msg.text,
+        userId: msg.from.id,
         messageId: msg.message_id,
-        chatId: msg.chat.id,
-        amount: parseFloat(amount),
-        currency: parsedCurrency,
-        description,
       });
 
-      await bot.sendMessage(
-        chatId,
-        `You typed the amount: *${amount}* with currency *${parsedCurrency}* and description *${description}*`,
-      );
+      await bot.sendMessage(chatId, response.message);
     },
   },
 

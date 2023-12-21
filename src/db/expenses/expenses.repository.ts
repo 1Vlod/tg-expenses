@@ -108,9 +108,29 @@ class ExpensesRepository {
     return await this.collection.findOne({ _id: id });
   }
 
+  async getExpenseByMessageId({
+    messageId,
+    userId,
+  }: {
+    messageId: number;
+    userId: number;
+  }) {
+    return await this.collection.findOne({ messageId, userId });
+  }
+
   async updateExpense(id: string, expense: Partial<Expense>) {
     return await this.collection.findOneAndUpdate(
       { _id: id },
+      { $set: expense },
+    );
+  }
+
+  async updateExpenseByMessageId(
+    messageId: number,
+    expense: Partial<Expense>,
+  ) {
+    return await this.collection.findOneAndUpdate(
+      { messageId },
       { $set: expense },
     );
   }
