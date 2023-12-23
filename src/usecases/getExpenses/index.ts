@@ -2,12 +2,17 @@ import expensesRepository from '../../db/expenses/expenses.repository';
 import { Usecase } from '../interfaces';
 import { GetExpensesParams } from './interfaces';
 
-export const getEpxensesUsecase: Usecase<GetExpensesParams> = async params => {
+export const getEpxensesUsecase: Usecase<GetExpensesParams> = async ({
+  timeRange,
+  ...params
+}) => {
   const expenses = await expensesRepository.getExpenses(params);
+  if (expenses.length === 0) {
+    return {
+      message: `You have no expenses for *${timeRange}*.`,
+    };
+  }
 
-  const message = expenses.length
-    ? `You have ${expenses.length} expenses for this period.\nHere is your expenses list: `
-    : 'You have no expenses for this period.';
   const buttons = expenses.map(
     ({ _id, createdAt, amount, currency, description }) => [
       {
@@ -20,7 +25,7 @@ export const getEpxensesUsecase: Usecase<GetExpensesParams> = async params => {
   );
 
   return {
-    message,
+    message: `You have ${expenses.length} expenses for *${timeRange}*.\nHere is your expenses list: `,
     buttons,
   };
 };

@@ -2,10 +2,9 @@ export * from './message.listener';
 export * from './callbackQuery';
 
 import bot from '../modules/tgBot';
-import expensesRepository from '../db/expenses/expenses.repository';
 import { EVENTS, PREFIX } from '../constants';
 import { TGListener } from './interfaces';
-import { expensesButtons, helpTemplate, startMessage } from '../templates';
+import { dateFiltersButtons, helpTemplate, startMessage } from '../templates';
 import { createExpenseUsecase } from '../usecases/createExpense';
 
 export const listeners: TGListener[] = [
@@ -40,11 +39,15 @@ export const listeners: TGListener[] = [
         bot.sendMessage(chatId, 'Invalid format. Please use default format.'); // TODO: add default format example
         return;
       }
-      const total = await expensesRepository.getTotal(msg.from.id);
-      const totalString = total.map(
-        ({ currency, total }) => `\n*${total}:* ${currency}`,
-      );
-      bot.sendMessage(chatId, `Your total expenses: ${totalString}`);
+
+      bot.sendInlineKeyboard({
+        chatId: msg.chat.id,
+        text: 'Choose date range:',
+        keyboard: {
+          keys: dateFiltersButtons,
+          commonPrefix: PREFIX.EXPENSES_DATE_FILTER_TOTAL,
+        },
+      });
     },
   },
 
@@ -70,7 +73,7 @@ export const listeners: TGListener[] = [
         chatId: msg.chat.id,
         text: 'Choose date range:',
         keyboard: {
-          keys: expensesButtons,
+          keys: dateFiltersButtons,
           commonPrefix: PREFIX.EXPENSES_DATE_FILTER,
         },
       });

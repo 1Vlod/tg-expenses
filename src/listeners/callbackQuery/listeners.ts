@@ -4,6 +4,7 @@ import { getEpxenseUsecase } from '../../usecases/getExpense';
 import { CallbackQueryListenersMap } from './interfaces';
 import { deleteEpxenseUsecase } from '../../usecases/deleteExpense';
 import { parseDateFilter } from '../../helpers/parsers';
+import { getTotalUsecase } from '../../usecases/getTotal';
 
 export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
   [PREFIX.EXPENSES_DATE_FILTER]: async (ctx, callbackQueryData) => {
@@ -18,6 +19,7 @@ export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
 
     const response = await getEpxensesUsecase({
       userId: ctx.userId,
+      timeRange: callbackQueryData,
       ...dateFilters,
     });
 
@@ -58,6 +60,27 @@ export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
       response: {
         message: response.message,
       },
+    };
+  },
+
+  [PREFIX.EXPENSES_DATE_FILTER_TOTAL]: async (ctx, callbackQueryData) => {
+    const dateFilters = parseDateFilter(callbackQueryData);
+    if (!dateFilters) {
+      return {
+        error: true,
+        message: 'Invalid date filter',
+        userErrorMessage: 'Unsupported date filter. Please try again later.',
+      };
+    }
+
+    const response = await getTotalUsecase({
+      userId: ctx.userId,
+      timeRange: callbackQueryData,
+      ...dateFilters,
+    });
+
+    return {
+      response,
     };
   },
 };
