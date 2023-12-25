@@ -10,6 +10,7 @@ export enum CATEGORIES {
   GIFTS = 'подарки',
   FAST_FOOD = 'фастфуд',
   PETS = 'домашние животные',
+  SPORT = 'спорт',
   OTHER = 'другое',
 }
 
