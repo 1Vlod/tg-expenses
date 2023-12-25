@@ -1,4 +1,4 @@
 export * from './help';
-export * from './expenses';
+export * from './dateFilters';
 export * from './start';
 export * from './commands';

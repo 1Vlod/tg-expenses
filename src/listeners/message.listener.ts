@@ -11,9 +11,29 @@ export const messageListener: MessageListener = async msg => {
     return;
   }
 
+  if (
+    msg.reply_to_message?.from?.is_bot ||
+    msg.from?.id !== msg.reply_to_message?.from?.id
+  ) {
+    await bot.sendMessage(
+      msg.chat.id,
+      'To add category, please reply to your expense message.',
+    );
+    return;
+  }
+
   if (msg.reply_to_message) {
     const msgText = msg.reply_to_message.text;
     const amount = msgText?.match(EVENTS.ANY_DIGITS)?.[1];
+
+    if (!amount) {
+      await bot.sendMessage(
+        msg.chat.id,
+        'Expense amount was not found. To add category, please reply to your expense message.',
+      );
+      return;
+    }
+
     if (amount && msg.from?.id) {
       const originalMsgId = msg.reply_to_message.message_id;
       const expense = await expensesRepository.getExpenseByMessageId({
@@ -39,7 +59,9 @@ export const messageListener: MessageListener = async msg => {
         );
       }
 
-      const isValidCategory = categoriesValues.includes(msg.text as any);
+      const isValidCategory = categoriesValues.includes(
+        msg.text?.toLowerCase() as any,
+      );
 
       if (!isValidCategory) {
         await bot.sendMessage(

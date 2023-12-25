@@ -68,12 +68,20 @@ class ExpensesRepository {
       ])
       .toArray();
 
-    console.log('total count: ', result[0].totalCount[0].count); // TODO: add pagination
+    console.log('total count: ', result[0].totalCount[0]?.count); // TODO: add pagination
 
     return result[0].expenses;
   }
 
-  async getTotal(userId: number) {
+  async getTotal({
+    userId,
+    from,
+    to,
+  }: {
+    userId: number;
+    from: string;
+    to: string;
+  }) {
     const total = await this.collection
       .aggregate<{
         currency: string;
@@ -82,6 +90,10 @@ class ExpensesRepository {
         {
           $match: {
             userId,
+            createdAt: {
+              $gte: new Date(from),
+              $lte: new Date(to),
+            },
           },
         },
         {
@@ -125,10 +137,7 @@ class ExpensesRepository {
     );
   }
 
-  async updateExpenseByMessageId(
-    messageId: number,
-    expense: Partial<Expense>,
-  ) {
+  async updateExpenseByMessageId(messageId: number, expense: Partial<Expense>) {
     return await this.collection.findOneAndUpdate(
       { messageId },
       { $set: expense },

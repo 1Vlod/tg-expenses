@@ -1,4 +1,4 @@
-export interface GetExpensesParams {
+export interface GetTotalParams {
   userId: number;
   from: string;
   to: string;
