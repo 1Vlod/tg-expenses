@@ -14,4 +14,6 @@ export enum CATEGORIES {
   OTHER = 'другое',
 }
 
-export const categoriesValues = Object.values(CATEGORIES);
+export const categoriesValues = Object.values(CATEGORIES) as string[];
+
+export const categoriesValuesString = categoriesValues.join('\n');

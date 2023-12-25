@@ -4,10 +4,15 @@ import { MessageListener } from './interfaces';
 import expensesRepository from '../db/expenses/expenses.repository';
 import { EVENTS } from '../constants';
 import { createExpenseUsecase } from '../usecases/createExpense';
-import { categoriesValues } from '../constants/categories';
+import {
+  categoriesValues,
+  categoriesValuesString,
+} from '../constants/categories';
 
 export const messageListener: MessageListener = async msg => {
-  if (!msg.text || isEventMatch(msg.text)) {
+  const text = msg.text?.toLowerCase();
+  const chatId = msg.chat.id;
+  if (!text || isEventMatch(text)) {
     return;
   }
 
@@ -16,7 +21,7 @@ export const messageListener: MessageListener = async msg => {
     msg.from?.id !== msg.reply_to_message?.from?.id
   ) {
     await bot.sendMessage(
-      msg.chat.id,
+      chatId,
       'To add category, please reply to your expense message.',
     );
     return;
@@ -28,7 +33,7 @@ export const messageListener: MessageListener = async msg => {
 
     if (!amount) {
       await bot.sendMessage(
-        msg.chat.id,
+        chatId,
         'Expense amount was not found. To add category, please reply to your expense message.',
       );
       return;
@@ -44,31 +49,29 @@ export const messageListener: MessageListener = async msg => {
       if (!expense) {
         const response = await createExpenseUsecase({
           amount,
-          chatId: msg.chat.id,
+          chatId,
           text: msgText,
           userId: msg.from.id,
           messageId: originalMsgId,
         });
         if (response.error) {
-          await bot.sendMessage(msg.chat.id, response.message);
+          await bot.sendMessage(chatId, response.message);
           return;
         }
         await bot.sendMessage(
-          msg.chat.id,
+          chatId,
           'Expense was not found. Created new one.' + '\n' + response.message,
         );
       }
 
-      const isValidCategory = categoriesValues.includes(
-        msg.text?.toLowerCase() as any,
-      );
+      const isValidCategory = categoriesValues.includes(text);
 
       if (!isValidCategory) {
         await bot.sendMessage(
-          msg.chat.id,
+          chatId,
           'Invalid category. Please use one from the list:' +
             '\n' +
-            categoriesValues.join('\n'),
+            categoriesValuesString,
         );
         return;
       }
@@ -76,17 +79,14 @@ export const messageListener: MessageListener = async msg => {
       await expensesRepository.updateExpenseByMessageId(originalMsgId, {
         category: msg.text,
       });
-      await bot.sendMessage(
-        msg.chat.id,
-        `Expense category updated - ${msg.text}`,
-      );
+      await bot.sendMessage(chatId, `Expense category updated - ${text}`);
 
       return;
     }
   }
 
   bot.sendMessage(
-    msg.chat.id,
+    chatId,
     'Sorry, I did not understand that. Type /help for a list of available commands.',
   );
 };
