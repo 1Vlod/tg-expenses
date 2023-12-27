@@ -1,4 +1,4 @@
-import { PREFIX } from '../../constants';
+import { PREFIX, paramsSeparator } from '../../constants';
 import { getEpxensesUsecase } from '../../usecases/getExpenses';
 import { getEpxenseUsecase } from '../../usecases/getExpense';
 import { CallbackQueryListenersMap } from './interfaces';
@@ -8,7 +8,9 @@ import { getTotalUsecase } from '../../usecases/getTotal';
 
 export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
   [PREFIX.EXPENSES_DATE_FILTER]: async (ctx, callbackQueryData) => {
-    const dateFilters = parseDateFilter(callbackQueryData);
+    const [timeRange, pageFilter = 'p0'] =
+      callbackQueryData.split(paramsSeparator);
+    const dateFilters = parseDateFilter(timeRange);
     if (!dateFilters) {
       return {
         error: true,
@@ -16,10 +18,19 @@ export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
         userErrorMessage: 'Unsupported date filter. Please try again later.',
       };
     }
+    const page = +pageFilter.slice(1);
+    if (pageFilter && isNaN(page)) {
+      return {
+        error: true,
+        message: `Invalid page number: ${pageFilter}`,
+        userErrorMessage: 'Unsupported page number. Please try again later.',
+      };
+    }
 
     const response = await getEpxensesUsecase({
       userId: ctx.userId,
-      timeRange: callbackQueryData,
+      timeRange,
+      page,
       ...dateFilters,
     });
 

@@ -47,6 +47,7 @@ const customCurrencyMap = {
   'ДИНАР': currencyCodes.RSD,
   RD: currencyCodes.RSD,
   D: currencyCodes.RSD,
+  РСД: currencyCodes.RSD,
 };
 
 export const currencyMap: {
