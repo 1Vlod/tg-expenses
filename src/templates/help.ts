@@ -3,6 +3,7 @@ export const helpTemplate = `Available commands:
 /help - Show this help message 
 /total - Show total expenses for all time
 /expenses - Show filter buttons for expenses
+/currency - Show supported currencies
 
 To add an expense, type amount, currency and description. For example:
 100 USD lunch with friends

@@ -15,4 +15,8 @@ export const commands = [
     command: '/expenses',
     description: 'Show filter buttons for expenses',
   },
+  {
+    command: '/currency',
+    description: 'Show supported currencies',
+  }
 ];
