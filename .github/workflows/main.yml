@@ -2,18 +2,27 @@ name: Main workflow
 on: [workflow_dispatch]
 jobs:
   production-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+
     steps:
-      - uses: actions/setup-node@v4.0.1
-        with:
-          node-version: 18
-      - uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
-        with:
-          # ssh remote host
-          host: ${{secrets.PROD_IP}}
-          user: ${{secrets.PROD_USER}}
-          pass: ${{secrets.PROD_PASSWORD}}
-          # execute pre-commands before scp
-          first_ssh: "node -v && cd ./tgexpenses && git pull && scripts/startpm2"
+    - uses: actions/checkout@v2
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+    - run: npm run start:pm2
+    # runs-on: ubuntu-latest
+    # steps:
+    #   - uses: actions/setup-node@v4.0.1
+    #     with:
+    #       node-version: 18
+    #   - uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+    #     with:
+    #       # ssh remote host
+    #       host: ${{secrets.PROD_IP}}
+    #       user: ${{secrets.PROD_USER}}
+    #       pass: ${{secrets.PROD_PASSWORD}}
+    #       # execute pre-commands before scp
+    #       first_ssh: "node -v && cd ./tgexpenses && git pull && scripts/startpm2"
               
   
