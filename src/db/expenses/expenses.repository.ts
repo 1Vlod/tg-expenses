@@ -26,10 +26,12 @@ class ExpensesRepository {
     userId,
     from,
     to,
+    page,
   }: {
     userId: number;
     from: string;
     to: string;
+    page: number;
   }) {
     const result = await this.collection
       .aggregate<{
@@ -46,31 +48,36 @@ class ExpensesRepository {
           },
         },
         {
-          $sort: {
-            createdAt: -1,
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            createdAt: 1,
-            amount: 1,
-            currency: 1,
-            description: 1,
-          },
-        },
-        {
           $facet: {
-            expenses: [{ $match: {} }],
+            expenses: [
+              { $match: {} },
+              {
+                $project: {
+                  _id: 1,
+                  createdAt: 1,
+                  amount: 1,
+                  currency: 1,
+                  description: 1,
+                },
+              },
+              {
+                $sort: {
+                  createdAt: -1,
+                },
+              },
+              { $skip: page * 10 },
+              { $limit: 10 },
+            ],
             totalCount: [{ $count: 'count' }],
           },
         },
       ])
       .toArray();
 
-    console.log('total count: ', result[0].totalCount[0]?.count); // TODO: add pagination
-
-    return result[0].expenses;
+    return {
+      expenses: result[0].expenses,
+      totalCount: result[0].totalCount[0]?.count,
+    };
   }
 
   async getTotal({

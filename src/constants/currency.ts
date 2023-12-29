@@ -44,9 +44,10 @@ const customCurrencyMap = {
   DIN: currencyCodes.RSD,
   ДИН: currencyCodes.RSD,
   Д: currencyCodes.RSD,
-  'ДИНАР': currencyCodes.RSD,
+  ДИНАР: currencyCodes.RSD,
   RD: currencyCodes.RSD,
   D: currencyCodes.RSD,
+  РСД: currencyCodes.RSD,
 };
 
 export const currencyMap: {
@@ -57,3 +58,43 @@ export const currencyMap: {
   ...oneLetterCurrencyMap,
   ...customCurrencyMap,
 };
+
+const reverseCurrencyMap = Object.keys(currencyMap).reduce(
+  (acc, key) => {
+    const currencyCode = currencyMap[key as keyof typeof currencyMap];
+
+    if (!currencyCode) {
+      return acc;
+    }
+
+    if (acc[currencyCode]) {
+      return {
+        ...acc,
+        [currencyCode]: [...acc[currencyCode], key],
+      };
+    }
+
+    return {
+      ...acc,
+      [currencyCode]: [key],
+    };
+  },
+  {} as { [key in keyof typeof currencyCodes]: string[] },
+);
+
+export const currencyMessage =
+  'Supported currencies codes and mapped values: ' +
+  '\n\n' +
+  '*Code | Values*' +
+  '\n' +
+  Object.keys(reverseCurrencyMap).reduce((acc, key) => {
+    return (
+      acc +
+      `*${key}* : ${reverseCurrencyMap[
+        key as keyof typeof reverseCurrencyMap
+      ].join(', ')}` +
+      '\n'
+    );
+  }, '') +
+  '\n' +
+  'You can use any of these values in your expenses.';

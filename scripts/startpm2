@@ -2,7 +2,6 @@
 
 # Exit immediately if a command exits with a non-zero status
 set -e
-ls -la
 # Load environment variables from .env file
 set -a
 source ./.env

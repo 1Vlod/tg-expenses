@@ -2,7 +2,7 @@ export * from './message.listener';
 export * from './callbackQuery';
 
 import bot from '../modules/tgBot';
-import { EVENTS, PREFIX } from '../constants';
+import { EVENTS, PREFIX, currencyMessage } from '../constants';
 import { TGListener } from './interfaces';
 import { dateFiltersButtons, helpTemplate, startMessage } from '../templates';
 import { createExpenseUsecase } from '../usecases/createExpense';
@@ -63,6 +63,13 @@ export const listeners: TGListener[] = [
     event: EVENTS.START,
     handler: msg => {
       bot.sendMessage(msg.chat.id, startMessage);
+    },
+  },
+
+  {
+    event: EVENTS.СURRENCY,
+    handler: msg => {
+      bot.sendMessage(msg.chat.id, currencyMessage);
     },
   },
 

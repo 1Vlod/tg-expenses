@@ -3,4 +3,5 @@ export interface GetExpensesParams {
   from: string;
   to: string;
   timeRange: string;
+  page?: number;
 }

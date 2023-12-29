@@ -15,7 +15,14 @@ export const createExpenseUsecase: Usecase<CreateExpenseParams> = async ({
   const [currency, ...descriptionArray] = info;
   const description = descriptionArray.join(' ');
 
-  const parsedCurrency = currencyMap[currency.toUpperCase()] || currency;
+  const parsedCurrency = currencyMap[currency.toUpperCase()];
+
+  if (!parsedCurrency) {
+    return {
+      error: true,
+      message: `Currency *${currency}* is not supported.` + '\n' + `Please use command /currency to see the list of available currencies.`,
+    };
+  }
 
   await expensesRepository.createExpense({
     userId,
