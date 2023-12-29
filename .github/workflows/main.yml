@@ -2,8 +2,11 @@ name: Main workflow
 on: [workflow_dispatch]
 jobs:
   production-deploy:
-    runs-on: self-hosted
-    steps:          
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4.0.1
+        with:
+          node-version: 18
       - uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
         with:
           # ssh remote host
