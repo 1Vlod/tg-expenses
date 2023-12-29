@@ -11,19 +11,6 @@ jobs:
         username: ${{secrets.PROD_USER}}
         password: ${{secrets.PROD_PASSWORD}}
         script: | 
-          echo "Nice Job!!!"; source ~/.nvm/nvm.sh && node -v
-    # runs-on: ubuntu-latest
-    # steps:
-    #   - uses: actions/setup-node@v4.0.1
-    #     with:
-    #       node-version: 18
-    #   - uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
-    #     with:
-    #       # ssh remote host
-    #       host: ${{secrets.PROD_IP}}
-    #       user: ${{secrets.PROD_USER}}
-    #       pass: ${{secrets.PROD_PASSWORD}}
-    #       # execute pre-commands before scp
-    #       first_ssh: "node -v && cd ./tgexpenses && git pull && scripts/startpm2"
+          echo "Connected to server!"; source ~/.nvm/nvm.sh; cd ./tgexpenses && git pull && scripts/startpm2
               
   
