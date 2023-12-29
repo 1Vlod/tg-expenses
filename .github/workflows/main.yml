@@ -11,7 +11,7 @@ jobs:
         username: ${{secrets.PROD_USER}}
         password: ${{secrets.PROD_PASSWORD}}
         script: | 
-          echo "Nice Job!!!"; source ~/.nvm/nvm.sh; node -v
+          echo "Nice Job!!!"; source ~/.nvm/nvm.sh && node -v
     # runs-on: ubuntu-latest
     # steps:
     #   - uses: actions/setup-node@v4.0.1
