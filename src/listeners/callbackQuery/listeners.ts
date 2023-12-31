@@ -51,7 +51,7 @@ export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
     };
   },
 
-  [PREFIX.EXPENSES_EDIT]: async (ctx, callbackQueryData) => {
+  [PREFIX.EXPENSES_EDIT]: async (/*ctx: _, callbackQueryData*/) => {
     return {
       error: true,
       message: 'Not implemented yet',

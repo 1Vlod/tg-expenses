@@ -30,4 +30,4 @@ export type CallbackQueryListenersMap = {
     ctx: CallbackQueryContext,
     callbackQueryData: string,
   ) => Promise<CallbackQueryListenerResponse>;
-}
+};

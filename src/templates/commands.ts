@@ -18,5 +18,5 @@ export const commands = [
   {
     command: '/currency',
     description: 'Show supported currencies',
-  }
+  },
 ];

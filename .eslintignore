@@ -1,0 +1,9 @@
+# Ignore built files
+build/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore specific files or directories
+dist/
+coverage/
