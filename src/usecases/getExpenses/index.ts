@@ -48,7 +48,7 @@ export const getEpxensesUsecase: Usecase<GetExpensesParams> = async ({
   const message =
     `You have ${totalCount} expenses for *${timeRange}*.` +
     '\n' +
-    `Here is your expenses: `;
+    'Here is your expenses: ';
 
   return {
     message,

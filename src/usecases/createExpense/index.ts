@@ -20,7 +20,10 @@ export const createExpenseUsecase: Usecase<CreateExpenseParams> = async ({
   if (!parsedCurrency) {
     return {
       error: true,
-      message: `Currency *${currency}* is not supported.` + '\n' + `Please use command /currency to see the list of available currencies.`,
+      message:
+        `Currency *${currency}* is not supported.` +
+        '\n' +
+        'Please use command /currency to see the list of available currencies.',
     };
   }
 
