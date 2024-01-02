@@ -1,10 +1,11 @@
-import { PREFIX, paramsSeparator } from '../../constants';
+import { Errors, PREFIX, paramsSeparator } from '../../constants';
 import { getEpxensesUsecase } from '../../usecases/getExpenses';
 import { getEpxenseUsecase } from '../../usecases/getExpense';
 import { CallbackQueryListenersMap } from './interfaces';
 import { deleteEpxenseUsecase } from '../../usecases/deleteExpense';
 import { parseDateFilter } from '../../helpers/parsers';
 import { getTotalUsecase } from '../../usecases/getTotal';
+import { setCategoryUsecase } from '../../usecases/setCategory';
 
 export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
   [PREFIX.EXPENSES_DATE_FILTER]: async (ctx, callbackQueryData) => {
@@ -92,6 +93,35 @@ export const CALLBACK_QUERY_LISTENERS_MAP: CallbackQueryListenersMap = {
 
     return {
       response,
+    };
+  },
+
+  [PREFIX.EXPENSES_CATEGORY_SELECT]: async (ctx, callbackQueryData) => {
+    const [msgId, category = ''] = callbackQueryData.split(paramsSeparator);
+    const parsedCategory = category.slice(1);
+
+    if (!msgId || !parsedCategory) {
+      return {
+        error: true,
+        message: 'Invalid params',
+        userErrorMessage: Errors.defaultUserErrorMessage,
+      };
+    }
+
+    const response = await setCategoryUsecase({
+      category: parsedCategory,
+      messageId: +msgId,
+      userId: ctx.userId,
+    });
+
+    if (response.error) {
+      return response;
+    }
+
+    return {
+      response: {
+        message: response.message,
+      },
     };
   },
 };

@@ -4,6 +4,7 @@ export enum PREFIX {
   EXPENSES_GET_ONE = 'exg1',
   EXPENSES_EDIT = 'exed',
   EXPENSES_DELETE = 'exd',
+  EXPENSES_CATEGORY_SELECT = 'excs',
 
   // MESSAGE_CANCEL = 'mc',
 }

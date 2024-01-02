@@ -28,6 +28,20 @@ export const listeners: TGListener[] = [
       });
 
       await bot.sendMessage(chatId, response.message);
+
+      if (response.error) {
+        return;
+      }
+
+      if (response.buttons?.length) {
+        await bot.sendInlineKeyboard({
+          chatId,
+          text: 'Choose category:',
+          keyboard: {
+            keys: response.buttons,
+          },
+        });
+      }
     },
   },
 

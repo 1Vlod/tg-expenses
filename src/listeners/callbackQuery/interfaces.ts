@@ -3,6 +3,7 @@ import { PREFIX } from '../../constants';
 export interface CallbackQueryContext {
   userId: number;
   chatId: number;
+  messageText?: string;
 }
 
 export interface CallbackQueryData {
