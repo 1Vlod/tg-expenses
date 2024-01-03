@@ -12,13 +12,14 @@ import {
 export const messageListener: MessageListener = async msg => {
   const text = msg.text?.toLowerCase();
   const chatId = msg.chat.id;
+  const userId = msg.from?.id;
   if (!text || isEventMatch(text)) {
     return;
   }
 
   if (
     msg.reply_to_message?.from?.is_bot ||
-    msg.from?.id !== msg.reply_to_message?.from?.id
+    userId !== msg.reply_to_message?.from?.id
   ) {
     await bot.sendMessage(
       chatId,
@@ -39,19 +40,19 @@ export const messageListener: MessageListener = async msg => {
       return;
     }
 
-    if (amount && msg.from?.id) {
+    if (amount && userId) {
       const originalMsgId = msg.reply_to_message.message_id;
       const expense = await expensesRepository.getExpenseByMessageId({
         messageId: originalMsgId,
-        userId: msg.from?.id,
+        userId,
       });
 
       if (!expense) {
         const response = await createExpenseUsecase({
           amount,
           chatId,
+          userId,
           text: msgText,
-          userId: msg.from.id,
           messageId: originalMsgId,
         });
         if (response.error) {
@@ -76,9 +77,15 @@ export const messageListener: MessageListener = async msg => {
         return;
       }
 
-      await expensesRepository.updateExpenseByMessageId(originalMsgId, {
-        category: msg.text,
-      });
+      await expensesRepository.updateExpenseByMessageId(
+        {
+          messageId: originalMsgId,
+          userId,
+        },
+        {
+          category: msg.text,
+        },
+      );
       await bot.sendMessage(chatId, `Expense category updated - ${text}`);
 
       return;

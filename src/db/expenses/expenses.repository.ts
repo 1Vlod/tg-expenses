@@ -144,9 +144,12 @@ class ExpensesRepository {
     );
   }
 
-  async updateExpenseByMessageId(messageId: number, expense: Partial<Expense>) {
+  async updateExpenseByMessageId(
+    { messageId, userId }: { messageId: number; userId: number },
+    expense: Partial<Expense>,
+  ) {
     return await this.collection.findOneAndUpdate(
-      { messageId },
+      { messageId, userId },
       { $set: expense },
     );
   }
